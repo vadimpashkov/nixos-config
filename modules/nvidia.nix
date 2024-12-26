@@ -2,11 +2,11 @@
 
 {
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.modesetting.enable = true;
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false;
   };
-  boot.kernelParams = [ "nvidia-drm.modeset=1" ];
+  hardware.graphics = {
+    enable = true;
+  };
 }
