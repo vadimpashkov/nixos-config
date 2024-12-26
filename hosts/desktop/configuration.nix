@@ -3,11 +3,14 @@
 {
   imports = [
     ../../modules/global-settings.nix
-    ../../modules/nvidia.nix
-    ../../modules/wayland.nix
     ../../modules/packages.nix
+    ../../modules/boot.nix
+    ../../modules/nvidia.nix
+    ../../modules/hyprland.nix
   ];
 
   networking.hostName = hostname;
   system.stateVersion = stateVersion;
+
+  networking.networkmanager.enable = true;
 }
