@@ -2,7 +2,7 @@
   description = "NixOS Config";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,9 +12,13 @@
   outputs = { self, nixpkgs, home-manager, ... }@inputs: let
     system = "x86_64-linux";
     hosts = [
-      { hostname = "desktop"; stateVersion = "24.11"; users = [
-        { username = "anisutsuri"; timezone = "Europe/Moscow"; }
-      ]; }
+      {
+        hostname = "desktop";
+        stateVersion = "24.11";
+        users = [
+          ./users/anisutsuri.nix
+        ];
+      }
     ];
 
     makeSystem = { hostname, stateVersion, users }: nixpkgs.lib.nixosSystem {
@@ -25,17 +29,19 @@
       modules = [
         ./hosts/${hostname}/configuration.nix
         ./hosts/${hostname}/hardware-configuration.nix
-        ./modules/users.nix
-      ];
+        inputs.home-manager.nixosModules.default
+      ] ++ users;
     };
 
-    makeHome = { username, timezone }: home-manager.lib.homeManagerConfiguration {
+    makeHome = { userFile }: let
+      username = nixpkgs.lib.basename userFile;
+    in home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
       extraSpecialArgs = {
-        inherit inputs username timezone;
+        inherit inputs username;
       };
       modules = [
-        ./hosts/${username}/home.nix
+        userFile
       ];
     };
 
@@ -47,9 +53,9 @@
 
     homeConfigurations = nixpkgs.lib.foldl' (configs: host:
       let
-        userConfigs = builtins.foldl' (userConfigs: user:
+        userConfigs = builtins.foldl' (userConfigs: userFile:
           userConfigs // {
-            "${user.username}" = makeHome user;
+            "${nixpkgs.lib.basename userFile}" = makeHome { userFile = userFile; };
           }
         ) {} host.users;
       in configs // userConfigs
