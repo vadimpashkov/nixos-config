@@ -15,35 +15,29 @@
       {
         hostname = "desktop";
         stateVersion = "24.11";
-        users = [
-          {
-            username = "anisutsuri";
-            homeFile = ./users/anisutsuri/home.nix;
-            settings = ./users/anisutsuri/settings.nix;
-          }
-        ];
+        users = [ "anisutsuri" ];
       }
     ];
 
     makeSystem = { hostname, stateVersion, users }: nixpkgs.lib.nixosSystem {
       system = system;
       specialArgs = {
-        inherit inputs stateVersion hostname users;
+        inherit inputs stateVersion hostname;
       };
       modules = [
         ./hosts/${hostname}/configuration.nix
         ./hosts/${hostname}/hardware-configuration.nix
         inputs.home-manager.nixosModules.default
-      ] ++ map (u: {
-        imports = [ u.settings ];
-        username = u.username;
+      ] ++ map (username: {
+        imports = [ ./users/${username}/settings.nix ];
+        username = username;
       }) users;
     };
 
-    makeHome = { username, homeFile }: home-manager.lib.homeManagerConfiguration {
+    makeHome = username: home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
       modules = [
-        homeFile
+        ./users/${username}/home.nix
       ];
     };
 
@@ -55,9 +49,9 @@
 
     homeConfigurations = nixpkgs.lib.foldl' (configs: host:
       let
-        userConfigs = nixpkgs.lib.foldl' (userConfigs: user:
+        userConfigs = nixpkgs.lib.foldl' (userConfigs: username:
           userConfigs // {
-            "${user.username}" = makeHome user;
+            "${username}" = makeHome username;
           }
         ) {} host.users;
       in configs // userConfigs
