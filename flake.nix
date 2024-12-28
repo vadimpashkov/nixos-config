@@ -16,7 +16,11 @@
         hostname = "desktop";
         stateVersion = "24.11";
         users = [
-          ./users/anisutsuri.nix
+          {
+            username = "anisutsuri";
+            homeFile = ./users/anisutsuri/home.nix;
+            settings = ./users/anisutsuri/settings.nix;
+          }
         ];
       }
     ];
@@ -30,18 +34,16 @@
         ./hosts/${hostname}/configuration.nix
         ./hosts/${hostname}/hardware-configuration.nix
         inputs.home-manager.nixosModules.default
-      ] ++ users;
+      ] ++ map (u: {
+        imports = [ u.settings ];
+        username = u.username;
+      }) users;
     };
 
-    makeHome = { userFile }: let
-      username = nixpkgs.lib.basename userFile;
-    in home-manager.lib.homeManagerConfiguration {
+    makeHome = { username, homeFile }: home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
-      extraSpecialArgs = {
-        inherit inputs username;
-      };
       modules = [
-        userFile
+        homeFile
       ];
     };
 
@@ -53,9 +55,9 @@
 
     homeConfigurations = nixpkgs.lib.foldl' (configs: host:
       let
-        userConfigs = builtins.foldl' (userConfigs: userFile:
+        userConfigs = nixpkgs.lib.foldl' (userConfigs: user:
           userConfigs // {
-            "${nixpkgs.lib.basename userFile}" = makeHome { userFile = userFile; };
+            "${user.username}" = makeHome user;
           }
         ) {} host.users;
       in configs // userConfigs
