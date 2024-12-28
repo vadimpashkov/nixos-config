@@ -31,7 +31,7 @@
         ./hosts/${hostname}/configuration.nix
         ./hosts/${hostname}/hardware-configuration.nix
         inputs.home-manager.nixosModules.default
-      ] ++ (map (username: ./users/${username}/settings.nix) users);
+      ] ++ (map (username: (import ./users/${username}/settings.nix { inherit  username; })) users);
     };
 
     # Функция для генерации Home Manager
