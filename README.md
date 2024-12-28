@@ -67,7 +67,17 @@ cd nixos-config
     nixos-generate-config --dir ./hosts/new-host
     ```
 
-3. Измените файл `configuration.nix` для настройки параметров нового хоста. Пример:
+    **Примечание:** Если файл `configuration.nix` уже существует, команда `nixos-generate-config` не перезапишет его. Вы увидите предупреждение: `warning: not overwriting existing configuration.nix`. Это поведение нормально и не требует действий, если ваша текущая конфигурация уже настроена. Если вы хотите обновить конфигурацию, удалите или переместите существующий файл перед выполнением команды.
+
+3. Добавьте сгенерированные файлы в Git:
+
+    ```bash
+    git add .
+    ```
+
+    **Важно:** Flakes требуют, чтобы все файлы, упомянутые в конфигурации, были добавлены в Git. Если этого не сделать, при сборке конфигурации может возникнуть ошибка.
+
+4. Измените файл `configuration.nix` для настройки параметров нового хоста. Пример:
 
     ```nix
     { config, pkgs, hostname, stateVersion, ... }:
@@ -88,7 +98,7 @@ cd nixos-config
     }
     ```
 
-4. Добавьте хост в файл `flake.nix`:
+5. Добавьте хост в файл `flake.nix`:
 
     ```nix
     { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
@@ -141,10 +151,6 @@ cd nixos-config
         wl-clipboard
         waybar
       ];
-
-      home.file.".config/hypr/hyprland.conf".text = ''
-        monitor = DP-1, 2560x1440@180Hz, 1080x0, 1
-      '';
     }
     ```
 
@@ -158,13 +164,13 @@ cd nixos-config
 
 ### 4. Примените конфигурацию
 
-#### Для системы:
+#### Для системы
 
 ```bash
 sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
-#### Для пользователя (Home-Manager):
+#### Для пользователя (Home-Manager)
 
 ```bash
 home-manager switch --flake .#<username>
@@ -184,6 +190,12 @@ home-manager switch --flake .#<username>
 
     ```bash
     nixos-generate-config --dir ./hosts/<hostname>
+    ```
+
+3. **Ошибка отсутствующего файла:** Если появляется ошибка вида `error: path '<path>' does not exist`, убедитесь, что все файлы, упомянутые в конфигурации, добавлены в Git:
+
+    ```bash
+    git add .
     ```
 
 ---
