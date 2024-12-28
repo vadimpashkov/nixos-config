@@ -1,16 +1,16 @@
 # NixOS Config
 
-Этот репозиторий содержит модульную конфигурацию для NixOS, разработанную для поддержки нескольких хостов и пользователей. Каждому хосту можно задать уникальные настройки, а пользователям — индивидуальные часовые пояса и окружение, управляемое с помощью Home-Manager.
+Этот репозиторий содержит модульную конфигурацию для NixOS, разработанную с использованием flakes. Он поддерживает несколько хостов и пользователей, включая интеграцию с Home-Manager для настройки пользовательских окружений.
 
 ---
 
 ## Возможности
 
 -   **Поддержка нескольких хостов:** Легко настраивайте разные машины с уникальными параметрами.
--   **Индивидуальные часовые пояса для пользователей:** Задавайте разные часовые пояса для каждого пользователя.
--   **Интеграция с Home-Manager:** Управляйте пользовательскими окружениями через Home-Manager.
--   **Масштабируемость:** Добавление новых хостов и пользователей требует минимальных изменений.
--   **Модульность:** Переиспользуемые модули для общих настроек, таких как драйверы NVIDIA, Wayland и пакеты.
+-   **Индивидуальные пользовательские настройки:** Каждый пользователь может иметь собственные параметры, такие как часовой пояс и окружение Home-Manager.
+-   **Модульность:** Конфигурация разбита на переиспользуемые модули для упрощения поддержки.
+-   **Wayland и Hyprland:** Полная поддержка Wayland и оконного менеджера Hyprland.
+-   **Интеграция Home-Manager:** Легкая настройка окружения пользователя.
 
 ---
 
@@ -18,18 +18,22 @@
 
 ```plaintext
 nixos-config/
-├── flake.nix                # Основной файл конфигурации
-├── modules/                 # Общие модули для переиспользования
-│   ├── global-settings.nix
-│   ├── nvidia.nix
-│   ├── wayland.nix
-│   ├── packages.nix
-│   └── users.nix
+├── flake.nix                # Основной файл flakes-конфигурации
+├── modules/                 # Общие модули для системы
+│   ├── boot.nix             # Настройки загрузки
+│   ├── global-settings.nix  # Общие параметры (например, системные переменные)
+│   ├── hyprland.nix         # Настройки для Hyprland
+│   ├── nvidia.nix           # Драйверы NVIDIA
+│   └── packages.nix         # Установленные пакеты
 ├── hosts/                   # Хост-специфичные конфигурации
-│   ├── desktop/
+│   ├── desktop/             # Конфигурация для хоста desktop
 │   │   ├── configuration.nix
 │   │   ├── hardware-configuration.nix
-│   │   └── home.nix
+├── users/                   # Настройки пользователей
+│   ├── anisutsuri/          # Конфигурация пользователя anisutsuri
+│   │   ├── settings.nix     # Системные параметры пользователя
+│   │   ├── home.nix         # Настройки Home-Manager пользователя
+└── LICENSE                  # Лицензия
 ```
 
 ---
@@ -41,224 +45,146 @@ nixos-config/
 Начните с клонирования репозитория на вашу локальную машину:
 
 ```bash
-git clone https://github.com/your-username/nixos-config.git
+git clone https://github.com/vadimpashkov/nixos-config.git
 cd nixos-config
 ```
 
 ---
 
-### 2. Включите поддержку Flakes
+### 2. Настройте хост
 
-Убедитесь, что в вашей установке NixOS включена поддержка Flakes. Для этого добавьте следующую строку в файл `/etc/nix/nix.conf`:
+1. Создайте конфигурацию для нового хоста:
 
-```ini
-experimental-features = nix-command flakes
-```
-
-Перезапустите службу Nix:
-
-```bash
-sudo systemctl restart nix-daemon
-```
-
----
-
-### 3. Добавьте новый хост
-
-1. **Создайте директорию для нового хоста:**
-
-    Скопируйте существующую директорию (например, `desktop`) в качестве шаблона:
+    Скопируйте существующую директорию хоста в папке `hosts/` и измените её имя:
 
     ```bash
     cp -r hosts/desktop hosts/new-host
     ```
 
-2. **Скопируйте `hardware-configuration.nix`:**
+2. Сгенерируйте файл `hardware-configuration.nix` для нового хоста:
 
-    Файл `hardware-configuration.nix` описывает уникальные аппаратные настройки вашей машины. Чтобы его создать:
+    ```bash
+    nixos-generate-config --dir ./hosts/new-host
+    ```
 
-    - Загрузитесь в систему NixOS, для которой создаётся конфигурация.
-    - Выполните следующую команду:
-
-        ```bash
-        nixos-generate-config --dir ./hosts/new-host
-        ```
-
-    Эта команда создаст или обновит `hardware-configuration.nix` для текущей машины и сохранит его в директорию `hosts/new-host`.
-
-3. **Отредактируйте конфигурацию хоста:**
-
-    Измените файл `configuration.nix` в директории `hosts/new-host`, чтобы настроить уникальные параметры для нового хоста. Например:
+3. Измените файл `configuration.nix` для настройки параметров нового хоста. Пример:
 
     ```nix
     { config, pkgs, hostname, stateVersion, ... }:
 
     {
-      networking.hostName = "new-host"; # Укажите имя хоста
-      system.stateVersion = "24.11";    # Версия NixOS
-
       imports = [
         ../../modules/global-settings.nix
-        ../../modules/nvidia.nix
-        ../../modules/wayland.nix
         ../../modules/packages.nix
+        ../../modules/boot.nix
+        ../../modules/nvidia.nix
+        ../../modules/hyprland.nix
       ];
+
+      networking.hostName = hostname;
+      system.stateVersion = stateVersion;
+
+      networking.networkmanager.enable = true;
     }
     ```
 
-4. **Добавьте хост в `flake.nix`:**
-
-    Откройте файл `flake.nix` и добавьте новый хост в список `hosts`:
+4. Добавьте хост в файл `flake.nix`:
 
     ```nix
-    { hostname = "new-host"; stateVersion = "24.11"; users = [
-      { username = "newuser"; timezone = "Europe/Moscow"; }
-    ]; }
+    { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
     ```
 
 ---
 
-### 4. Добавьте нового пользователя
+### 3. Настройте пользователя
 
-Чтобы добавить нового пользователя на существующий хост:
-
-1. Найдите нужный хост в списке `hosts` внутри `flake.nix`.
-2. Добавьте нового пользователя с указанием имени пользователя и часового пояса. Например:
-
-    ```nix
-    { hostname = "laptop"; stateVersion = "24.05"; users = [
-      { username = "newuser"; timezone = "Europe/Moscow"; }
-      { username = "exampleuser"; timezone = "Asia/Yekaterinburg"; }
-    ]; }
-    ```
-
-3. Создайте файл `home.nix` для нового пользователя:
+1. Создайте директорию для нового пользователя в папке `users/`:
 
     ```bash
-    cp hosts/desktop/home.nix hosts/desktop/exampleuser-home.nix
+    mkdir -p users/newuser
     ```
 
-    Отредактируйте файл для настройки окружения пользователя.
+2. Создайте файлы `settings.nix` и `home.nix` для пользователя. Пример:
+
+    **settings.nix**:
+
+    ```nix
+    { username, ... }:
+
+    {
+      users.users.${username} = {
+        isNormalUser = true;
+        home = "/home/${username}";
+        extraGroups = [ "networkmanager" "wheel" ];
+      };
+
+      time.timeZone = "Europe/Moscow";
+    }
+    ```
+
+    **home.nix**:
+
+    ```nix
+    { pkgs, username, ... }:
+
+    {
+      home.stateVersion = "24.11";
+
+      home.username = username;
+      home.homeDirectory = "/home/${username}";
+
+      home.packages = with pkgs; [
+        kitty
+        wayland
+        xwayland
+        hyprland
+        wl-clipboard
+        waybar
+      ];
+
+      home.file.".config/hypr/hyprland.conf".text = ''
+        monitor = DP-1, 2560x1440@180Hz, 1080x0, 1
+      '';
+    }
+    ```
+
+3. Добавьте пользователя в соответствующий хост в `flake.nix`:
+
+    ```nix
+    { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
+    ```
 
 ---
 
-### 5. Примените конфигурацию
+### 4. Примените конфигурацию
 
-Чтобы пересобрать конфигурацию системы для конкретного хоста, выполните:
+#### Для системы:
 
 ```bash
-sudo nixos-rebuild switch --flake .#hostname
+sudo nixos-rebuild switch --flake .#<hostname>
 ```
 
-Замените `hostname` на имя вашего хоста (например, `desktop`).
-
-Чтобы применить конфигурацию Home-Manager для конкретного пользователя, выполните:
+#### Для пользователя (Home-Manager):
 
 ```bash
-home-manager switch --flake .#username
+home-manager switch --flake .#<username>
 ```
-
-Замените `username` на имя пользователя (например, `exampleuser`).
-
----
-
-## Примеры
-
-### Пример: Добавление хоста `laptop`
-
-1. Добавьте хост в `flake.nix`:
-
-    ```nix
-    { hostname = "laptop"; stateVersion = "24.05"; users = [
-      { username = "yuyti"; timezone = "Asia/Tokyo"; }
-    ]; }
-    ```
-
-2. Создайте конфигурационные файлы для хоста:
-
-    ```bash
-    cp -r hosts/laptop hosts/laptop
-    ```
-
-3. Скопируйте файл `hardware-configuration.nix`:
-
-    ```bash
-    nixos-generate-config --dir ./hosts/laptop
-    ```
-
-4. Отредактируйте `hosts/laptop/configuration.nix` для настройки хоста.
-
-5. Примените конфигурацию:
-
-    ```bash
-    sudo nixos-rebuild switch --flake .#laptop
-    ```
-
-6. Примените конфигурацию Home-Manager для пользователя `yuyti`:
-
-    ```bash
-    home-manager switch --flake .#yuyti
-    ```
-
----
-
-### Пример: Добавление пользователя `vader` на хост `laptop`
-
-1. Добавьте пользователя в `flake.nix`:
-
-    ```nix
-    { hostname = "laptop"; stateVersion = "24.05"; users = [
-      { username = "yuyti"; timezone = "Asia/Tokyo"; }
-      { username = "vader"; timezone = "America/New_York"; }
-    ]; }
-    ```
-
-2. Создайте файл `home.nix` для пользователя:
-
-    ```bash
-    cp hosts/laptop/home.nix hosts/laptop/vader-home.nix
-    ```
-
-3. Настройте окружение пользователя в файле `vader-home.nix`.
-
-4. Примените конфигурацию Home-Manager для `vader`:
-
-    ```bash
-    home-manager switch --flake .#vader
-    ```
-
----
-
-## Примечания
-
--   **Файл `hardware-configuration.nix`:** Убедитесь, что этот файл индивидуален для каждой машины. Вы можете сгенерировать его с помощью:
-
-    ```bash
-    nixos-generate-config --dir ./hosts/hostname
-    ```
-
--   **Часовые пояса пользователей:** Убедитесь, что переменная `TZ` установлена корректно через файл `home.nix`.
-
--   Для устранения проблем проверьте логи:
-
-    ```bash
-    /var/log/nixos-rebuild.log
-    ```
 
 ---
 
 ## Решение проблем
 
-### Распространенные ошибки
+### Распространённые ошибки
 
-1. **Flakes не включены:**
-   Убедитесь, что `experimental-features = nix-command flakes` добавлено в `/etc/nix/nix.conf`.
-
-2. **Неправильное имя хоста или пользователя:**
+1. **Неправильное имя хоста или пользователя:**
    Проверьте, что `hostname` и `username` совпадают с именами, указанными в `flake.nix`.
 
-3. **Аппаратные проблемы:**
-   Пересоздайте `hardware-configuration.nix`, если аппаратное обеспечение изменилось.
+2. **Аппаратные проблемы:**
+   Пересоздайте `hardware-configuration.nix`, если аппаратное обеспечение изменилось:
+
+    ```bash
+    nixos-generate-config --dir ./hosts/<hostname>
+    ```
 
 ---
 
