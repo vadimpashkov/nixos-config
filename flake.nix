@@ -28,17 +28,21 @@
         ./hosts/${hostname}/configuration.nix
         ./hosts/${hostname}/hardware-configuration.nix
         inputs.home-manager.nixosModules.default
-      ] ++ map (username: {
-        imports = [ ./users/${username}/settings.nix ];
-        username = username;
-      }) users;
+      ] ++ (map (username: {
+        imports = [
+          (import ./users/${username}/settings.nix { inherit username; })
+        ];
+      }) users);
     };
 
-    makeHome = username: home-manager.lib.homeManagerConfiguration {
+    makeHome = { username }: home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
       modules = [
         ./users/${username}/home.nix
       ];
+      extraSpecialArgs = {
+        inherit inputs username;
+      };
     };
 
   in {
@@ -51,7 +55,7 @@
       let
         userConfigs = nixpkgs.lib.foldl' (userConfigs: username:
           userConfigs // {
-            "${username}" = makeHome username;
+            "${username}" = makeHome { username = username };
           }
         ) {} host.users;
       in configs // userConfigs
