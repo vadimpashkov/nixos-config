@@ -1,10 +1,17 @@
 { username, ... }:
 
 {
+  imports = [
+    ../../modules/nixos/hyprland.nix
+  ];
+
   users.users.${username} = {
     isNormalUser = true;
     home = "/home/${username}";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
   };
 
   time.timeZone = "Europe/Moscow";

@@ -1,11 +1,11 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 let
   basePackages = with pkgs; [
-    git
   ];
 
   devTools = with pkgs; [
+    git
     vim
   ];
 in

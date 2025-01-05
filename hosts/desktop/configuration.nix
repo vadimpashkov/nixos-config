@@ -1,16 +1,18 @@
-{ config, pkgs, hostname, stateVersion, ... }:
+{ hostname, stateVersion, ... }:
 
 {
   imports = [
-    ../../modules/global-settings.nix
-    ../../modules/packages.nix
-    ../../modules/boot.nix
-    ../../modules/nvidia.nix
-    ../../modules/hyprland.nix
+    ../../modules/nixos/global-settings.nix
+    ../../modules/nixos/packages.nix
+    ../../modules/nixos/boot.nix
+    ../../modules/nixos/nvidia.nix
+    ../../modules/nixos/bluetooth.nix
+    ../../modules/nixos/audio.nix
   ];
 
   networking.hostName = hostname;
   system.stateVersion = stateVersion;
 
   networking.networkmanager.enable = true;
+  services.resolved.enable = true;
 }
