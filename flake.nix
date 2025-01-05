@@ -7,60 +7,90 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland.url = "github:hyprwm/Hyprland";
+    nix-colors.url = "github:misterio77/nix-colors";
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # ags.url = "github:aylur/ags";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: let
-    system = "x86_64-linux";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
+    let
+      system = "x86_64-linux";
 
-    # Список хостов и пользователей
-    hosts = [
-      {
-        hostname = "desktop";
-        stateVersion = "24.11";
-        users = [ "anisutsuri" ];
-      }
-    ];
-
-    # Функция для генерации системы
-    makeSystem = { hostname, stateVersion, users }: nixpkgs.lib.nixosSystem {
-      system = system;
-      specialArgs = {
-        inherit inputs stateVersion hostname;
-      };
-      modules = [
-        ./hosts/${hostname}/configuration.nix
-        ./hosts/${hostname}/hardware-configuration.nix
-        inputs.home-manager.nixosModules.default
-      ] ++ (map (username: (import ./users/${username}/settings.nix { inherit  username; })) users);
-    };
-
-    # Функция для генерации Home Manager
-    makeHome = { username }: home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.${system};
-      modules = [
-        ./users/${username}/home.nix
+      # Список хостов и пользователей
+      hosts = [
+        {
+          hostname = "desktop";
+          stateVersion = "24.11";
+          users = [ "anisutsuri" ];
+        }
       ];
-      extraSpecialArgs = {
-        inherit username;
-      };
+
+      # Функция для генерации системы
+      makeSystem =
+        {
+          hostname,
+          stateVersion,
+          users,
+        }:
+        nixpkgs.lib.nixosSystem {
+          system = system;
+          specialArgs = {
+            inherit inputs stateVersion hostname;
+          };
+          modules = [
+            ./hosts/${hostname}/configuration.nix
+            ./hosts/${hostname}/hardware-configuration.nix
+            inputs.home-manager.nixosModules.default
+          ] ++ (map (username: (import ./users/${username}/settings.nix { inherit inputs username; })) users);
+        };
+
+      # Функция для генерации Home Manager
+      makeHome =
+        { username }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          modules = [
+            ./users/${username}/home.nix
+          ];
+          extraSpecialArgs = {
+            inherit inputs username;
+          };
+        };
+
+    in
+    {
+      # Автоматическая генерация конфигурации NixOS
+      nixosConfigurations = nixpkgs.lib.foldl' (
+        configs: host:
+        configs
+        // {
+          "${host.hostname}" = makeSystem host;
+        }
+      ) { } hosts;
+
+      # Автоматическая генерация конфигурации Home Manager
+      homeConfigurations = nixpkgs.lib.foldl' (
+        configs: host:
+        let
+          userConfigs = nixpkgs.lib.foldl' (
+            userConfigs: username:
+            userConfigs
+            // {
+              "${username}" = makeHome { username = username; };
+            }
+          ) { } host.users;
+        in
+        configs // userConfigs
+      ) { } hosts;
     };
-
-  in {
-    # Автоматическая генерация конфигурации NixOS
-    nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
-      configs // {
-        "${host.hostname}" = makeSystem host;
-      }) {} hosts;
-
-    # Автоматическая генерация конфигурации Home Manager
-    homeConfigurations = nixpkgs.lib.foldl' (configs: host:
-      let
-        userConfigs = nixpkgs.lib.foldl' (userConfigs: username:
-          userConfigs // {
-            "${username}" = makeHome { username = username; };
-          }
-        ) {} host.users;
-      in configs // userConfigs
-    ) {} hosts;
-  };
 }
