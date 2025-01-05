@@ -6,11 +6,11 @@
 
 ## Возможности
 
--   **Поддержка нескольких хостов:** Легко настраивайте разные машины с уникальными параметрами.
--   **Индивидуальные пользовательские настройки:** Каждый пользователь может иметь собственные параметры, такие как часовой пояс и окружение Home-Manager.
--   **Модульность:** Конфигурация разбита на переиспользуемые модули для упрощения поддержки.
--   **Wayland и Hyprland:** Полная поддержка Wayland и оконного менеджера Hyprland.
--   **Интеграция Home-Manager:** Легкая настройка окружения пользователя.
+- **Поддержка нескольких хостов:** Легко настраивайте разные машины с уникальными параметрами.
+- **Индивидуальные пользовательские настройки:** Каждый пользователь может иметь собственные параметры, такие как часовой пояс и окружение Home-Manager.
+- **Модульность:** Конфигурация разбита на переиспользуемые модули для упрощения поддержки.
+- **Wayland и Hyprland:** Полная поддержка Wayland и оконного менеджера Hyprland.
+- **Интеграция Home-Manager:** Легкая настройка окружения пользователя.
 
 ---
 
@@ -55,54 +55,52 @@ cd nixos-config
 
 1. Создайте конфигурацию для нового хоста:
 
-    Скопируйте существующую директорию хоста в папке `hosts/` и измените её имя:
+   Скопируйте существующую директорию хоста в папке `hosts/` и измените её имя:
 
-    ```bash
-    cp -r hosts/desktop hosts/new-host
-    ```
+   ```bash
+   cp -r hosts/desktop hosts/new-host
+   ```
 
 2. Сгенерируйте файл `hardware-configuration.nix` для нового хоста:
 
-    ```bash
-    nixos-generate-config --dir ./hosts/new-host
-    ```
-
-    **Примечание:** Если файл `configuration.nix` уже существует, команда `nixos-generate-config` не перезапишет его. Вы увидите предупреждение: `warning: not overwriting existing configuration.nix`. Это поведение нормально и не требует действий, если ваша текущая конфигурация уже настроена. Если вы хотите обновить конфигурацию, удалите или переместите существующий файл перед выполнением команды.
+   ```bash
+   nixos-generate-config --show-hardware-config > ./hosts/new-host/hardware-configuration.nix
+   ```
 
 3. Добавьте сгенерированные файлы в Git:
 
-    ```bash
-    git add .
-    ```
+   ```bash
+   git add .
+   ```
 
-    **Важно:** Flakes требуют, чтобы все файлы, упомянутые в конфигурации, были добавлены в Git. Если этого не сделать, при сборке конфигурации может возникнуть ошибка.
+   **Важно:** Flakes требуют, чтобы все файлы, упомянутые в конфигурации, были добавлены в Git. Если этого не сделать, при сборке конфигурации может возникнуть ошибка.
 
 4. Измените файл `configuration.nix` для настройки параметров нового хоста. Пример:
 
-    ```nix
-    { config, pkgs, hostname, stateVersion, ... }:
+   ```nix
+   { config, pkgs, hostname, stateVersion, ... }:
 
-    {
-      imports = [
-        ../../modules/global-settings.nix
-        ../../modules/packages.nix
-        ../../modules/boot.nix
-        ../../modules/nvidia.nix
-        ../../modules/hyprland.nix
-      ];
+   {
+     imports = [
+       ../../modules/global-settings.nix
+       ../../modules/packages.nix
+       ../../modules/boot.nix
+       ../../modules/nvidia.nix
+       ../../modules/hyprland.nix
+     ];
 
-      networking.hostName = hostname;
-      system.stateVersion = stateVersion;
+     networking.hostName = hostname;
+     system.stateVersion = stateVersion;
 
-      networking.networkmanager.enable = true;
-    }
-    ```
+     networking.networkmanager.enable = true;
+   }
+   ```
 
 5. Добавьте хост в файл `flake.nix`:
 
-    ```nix
-    { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
-    ```
+   ```nix
+   { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
+   ```
 
 ---
 
@@ -110,55 +108,55 @@ cd nixos-config
 
 1. Создайте директорию для нового пользователя в папке `users/`:
 
-    ```bash
-    mkdir -p users/newuser
-    ```
+   ```bash
+   mkdir -p users/newuser
+   ```
 
 2. Создайте файлы `settings.nix` и `home.nix` для пользователя. Пример:
 
-    **settings.nix**:
+   **settings.nix**:
 
-    ```nix
-    { username, ... }:
+   ```nix
+   { username, ... }:
 
-    {
-      users.users.${username} = {
-        isNormalUser = true;
-        home = "/home/${username}";
-        extraGroups = [ "networkmanager" "wheel" ];
-      };
+   {
+     users.users.${username} = {
+       isNormalUser = true;
+       home = "/home/${username}";
+       extraGroups = [ "networkmanager" "wheel" ];
+     };
 
-      time.timeZone = "Europe/Moscow";
-    }
-    ```
+     time.timeZone = "Europe/Moscow";
+   }
+   ```
 
-    **home.nix**:
+   **home.nix**:
 
-    ```nix
-    { pkgs, username, ... }:
+   ```nix
+   { pkgs, username, ... }:
 
-    {
-      home.stateVersion = "24.11";
+   {
+     home.stateVersion = "24.11";
 
-      home.username = username;
-      home.homeDirectory = "/home/${username}";
+     home.username = username;
+     home.homeDirectory = "/home/${username}";
 
-      home.packages = with pkgs; [
-        kitty
-        wayland
-        xwayland
-        hyprland
-        wl-clipboard
-        waybar
-      ];
-    }
-    ```
+     home.packages = with pkgs; [
+       kitty
+       wayland
+       xwayland
+       hyprland
+       wl-clipboard
+       waybar
+     ];
+   }
+   ```
 
 3. Добавьте пользователя в соответствующий хост в `flake.nix`:
 
-    ```nix
-    { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
-    ```
+   ```nix
+   { hostname = "new-host"; stateVersion = "24.11"; users = [ "newuser" ]; }
+   ```
 
 ---
 
@@ -186,17 +184,13 @@ home-manager switch --flake .#<username>
    Проверьте, что `hostname` и `username` совпадают с именами, указанными в `flake.nix`.
 
 2. **Аппаратные проблемы:**
-   Пересоздайте `hardware-configuration.nix`, если аппаратное обеспечение изменилось:
-
-    ```bash
-    nixos-generate-config --dir ./hosts/<hostname>
-    ```
+   Пересоздайте `hardware-configuration.nix`, если аппаратное обеспечение изменилось.
 
 3. **Ошибка отсутствующего файла:** Если появляется ошибка вида `error: path '<path>' does not exist`, убедитесь, что все файлы, упомянутые в конфигурации, добавлены в Git:
 
-    ```bash
-    git add .
-    ```
+   ```bash
+   git add .
+   ```
 
 ---
 
