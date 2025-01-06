@@ -1,20 +1,17 @@
-{ pkgs, ... }:
-
-let
+{pkgs, ...}: let
   waybarScript = pkgs.pkgs.writeShellScriptBin "waybar-launch" ''
     waybar &
   '';
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
     ${waybarScript}/bin/waybar-launch
   '';
-in
-{
+in {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
       "$mod" = "SUPER";
       "$terminal" = "kitty";
-      # "$fileManager" = "yazi";
+      "$fileManager" = "yazi";
       "$menu" = "rofi -show drun";
       "$bar" = "${waybarScript}/bin/waybar-launch";
       # "$wallpapers" = "~/.local/bin/swww-launch.sh";
@@ -23,11 +20,6 @@ in
         "LIBVA_DRIVER_NAME,nvidia"
         "XDG_SESSION_TYPE,wayland"
         "WLR_NO_HARDWARE_CURSORS,1"
-
-        "XCURSOR_SIZE,24"
-
-        "HYPRCURSOR_THEME,catppuccin-mocha-dark"
-        "HYPRCURSOR_SIZE,24"
       ];
 
       monitor = [
@@ -143,7 +135,7 @@ in
           "$mod, Return, exec, $terminal"
           "$mod, Delete, exit"
           "$mod, C, killactive"
-          # "$mod, E, exec $fileManager"
+          "$mod, E, exec, $fileManager"
           "$mod, V, togglefloating"
           "$mod, SPACE, exec, $menu"
           "$mod, P, pseudo, # dwindle"
@@ -169,15 +161,14 @@ in
         ]
         ++ (builtins.concatLists (
           builtins.genList (
-            i:
-            let
+            i: let
               ws = i + 1;
-            in
-            [
+            in [
               "$mod, code:1${toString i}, workspace, ${toString ws}"
               "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
             ]
-          ) 9
+          )
+          9
         ));
 
       bindm = [

@@ -1,13 +1,15 @@
-{ username, ... }:
-
+{ pkgs, username, ... }:
 {
   imports = [
     ../../modules/nixos/hyprland.nix
   ];
 
+  programs.zsh.enable = true;
+
   users.users.${username} = {
     isNormalUser = true;
     home = "/home/${username}";
+    shell = pkgs.zsh;
     extraGroups = [
       "networkmanager"
       "wheel"

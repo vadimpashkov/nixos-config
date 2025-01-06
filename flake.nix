@@ -25,6 +25,7 @@
     }@inputs:
     let
       system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
 
       # Список хостов и пользователей
       hosts = [
@@ -47,11 +48,15 @@
           specialArgs = {
             inherit inputs stateVersion hostname;
           };
-          modules = [
-            ./hosts/${hostname}/configuration.nix
-            ./hosts/${hostname}/hardware-configuration.nix
-            inputs.home-manager.nixosModules.default
-          ] ++ (map (username: (import ./users/${username}/settings.nix { inherit inputs username; })) users);
+          modules =
+            [
+              ./hosts/${hostname}/configuration.nix
+              ./hosts/${hostname}/hardware-configuration.nix
+              inputs.home-manager.nixosModules.default
+            ]
+            ++ (map (
+              username: (import ./users/${username}/settings.nix { inherit pkgs inputs username; })
+            ) users);
         };
 
       # Функция для генерации Home Manager
