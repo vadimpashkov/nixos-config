@@ -3,7 +3,7 @@
     enable = true;
     extraConfig = ''
       Host github.com
-        HostName gihub.com
+        HostName github.com
         User git
         IdentityFile /home/${username}/.ssh/github
         IdentitiesOnly yes
