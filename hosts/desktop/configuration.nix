@@ -1,9 +1,9 @@
-{ hostname, stateVersion, ... }:
-
 {
+  hostname,
+  stateVersion,
+  ...
+}: {
   imports = [
-    ../../modules/nixos/global-settings.nix
-    ../../modules/nixos/packages.nix
     ../../modules/nixos/boot.nix
     ../../modules/nixos/nvidia.nix
     ../../modules/nixos/bluetooth.nix
@@ -15,4 +15,11 @@
 
   networking.networkmanager.enable = true;
   services.resolved.enable = true;
+
+  # TODO
+  environment.sessionVariables = {
+    TERMINAL = "kitty";
+    VISUAL = "nvim";
+    EDITOR = "nvim";
+  };
 }
