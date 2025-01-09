@@ -44,5 +44,34 @@
         desc = "Go to references";
       };
     }
+
+    # Перенести выделенный текст влево/вправо (табуляция)
+    {
+      mode = "v";
+      key = "<";
+      action = "<gv";
+    }
+    {
+      mode = "v";
+      key = ">";
+      action = ">gv";
+    }
+
+    {
+      mode = "v";
+      key = "J";
+      action = ":m '>+1<CR>gv=gv";
+    }
+    {
+      mode = "v";
+      key = "K";
+      action = ":m '<-2<CR>gv=gv";
+    }
+
+    {
+      mode = "n";
+      key = "<TAB>";
+      action = ":bn<CR>";
+    }
   ];
 }
