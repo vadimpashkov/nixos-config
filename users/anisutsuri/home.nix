@@ -6,6 +6,7 @@
 }: {
   imports = [
     inputs.nixvim.homeManagerModules.default
+
     ./home-manager/ssh.nix
     ./home-manager/git.nix
     ./home-manager/stylix.nix
@@ -54,6 +55,7 @@
       fd
       thefuck
       tlrc
+      inputs.screenshot.packages.${pkgs.system}.screenshot
 
       # Main
       google-chrome

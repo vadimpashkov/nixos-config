@@ -9,12 +9,17 @@
     };
     hyprland.url = "github:hyprwm/Hyprland";
     hyprlock.url = "github:hyprwm/Hyprlock";
+    hypr-dynamic-cursors = {
+      url = "github:VirtCode/hypr-dynamic-cursors";
+      inputs.hyprland.follows = "hyprland"; # to make sure that the plugin is built for the correct version of hyprland
+    };
     stylix.url = "github:danth/stylix/release-24.11";
     swww.url = "github:LGFae/swww";
     nixvim = {
       url = "github:nix-community/nixvim/nixos-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    screenshot.url = "path:pkgs/screenshot";
   };
 
   outputs = {
