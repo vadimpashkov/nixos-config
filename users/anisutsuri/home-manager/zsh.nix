@@ -1,6 +1,6 @@
 {
   pkgs,
-  username,
+  outputs,
   ...
 }: {
   programs.zsh = {
@@ -11,7 +11,7 @@
 
     history = {
       size = 10000;
-      path = "/home/${username}/zsh/history";
+      path = "${outputs.globalConfig.dir.home}/zsh/history";
     };
 
     shellAliases = {
@@ -38,7 +38,7 @@
       }
       {
         name = "powerlevel10k-config";
-        src = ../dotfiles;
+        src = outputs.globalConfig.dir.dotfiles;
         file = "p10k.zsh";
       }
       {
