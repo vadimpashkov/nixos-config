@@ -24,63 +24,51 @@
     stylix,
     ...
   } @ inputs: let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      system = system;
-      config.allowUnfree = true;
+    inherit (self) outputs;
+
+    users = {
+      anisutsuri = "anisutsuri";
     };
 
-    username = "anisutsuri";
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
 
-    hosts = [
-      {
-        hostname = "desktop";
-        stateVersion = "24.11";
-      }
-    ];
+    globalConfig = import ./config.nix;
+  in {
+    globalConfig = globalConfig;
+    userConfig = import "${globalConfig.dir.user}/config.nix" {inherit pkgs;};
 
-    makeSystem = {
-      hostname,
-      stateVersion,
-      username,
-    }:
-      nixpkgs.lib.nixosSystem {
-        system = system;
-        specialArgs = {
-          inherit inputs pkgs stateVersion hostname username;
-        };
+    formatter = pkgs.alejandra;
+
+    nixosModules = import ./modules/nixos;
+    homeManagerModules = import ./modules/home-manager;
+
+    nixosConfigurations = {
+      "desktop" = nixpkgs.lib.nixosSystem {
         modules = [
-          ./hosts/${hostname}/configuration.nix
-          ./hosts/${hostname}/hardware-configuration.nix
-          ./modules/nixos/global.nix
-          ./users/${username}
+          ./profiles/desktop
+          (import globalConfig.dir.user {
+            pkgs = pkgs;
+            username = globalConfig.username;
+          })
+          (import ./system/global.nix {inherit pkgs outputs;})
           inputs.home-manager.nixosModules.default
         ];
+        specialArgs = {inherit inputs outputs;};
       };
-  in {
-    nixosConfigurations =
-      nixpkgs.lib.foldl' (
-        configs: host:
-          configs
-          // {
-            "${host.hostname}" = makeSystem {
-              hostname = host.hostname;
-              stateVersion = host.stateVersion;
-              username = username;
-            };
-          }
-      ) {}
-      hosts;
+    };
 
     homeConfigurations = {
-      "anisutsuri" = home-manager.lib.homeManagerConfiguration {
+      ${users.anisutsuri} = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgs;
         modules = [
           stylix.homeManagerModules.stylix
-          ./users/anisutsuri/home.nix
+          ./users/${users.anisutsuri}/home.nix
         ];
         extraSpecialArgs = {
-          inherit inputs username;
+          inputs = inputs;
+          outputs = outputs;
+          username = users.anisutsuri;
         };
       };
     };

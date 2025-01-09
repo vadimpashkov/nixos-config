@@ -3,6 +3,7 @@
   username,
   ...
 }: {
+  # TODO
   programs.zsh.enable = true;
 
   users.users.${username} = {
@@ -30,12 +31,6 @@
       LC_TELEPHONE = "ru_RU.UTF-8";
       LC_TIME = "ru_RU.UTF-8";
     };
-  };
-
-  environment.sessionVariables = {
-    TERMINAL = "kitty";
-    VISUAL = "nvim";
-    EDITOR = "nvim";
   };
 
   security.pam.services.hyprlock = {};

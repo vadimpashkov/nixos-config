@@ -21,50 +21,53 @@
     ./home-manager/tmux.nix
     ./home-manager/yazi.nix
     ./home-manager/obsidian.nix
+    ./home-manager/swappy.nix
   ];
-
-  home.stateVersion = "24.11";
-
-  home.username = username;
-  home.homeDirectory = "/home/${username}";
 
   nixpkgs.config.allowUnfree = true;
 
-  home.packages = with pkgs; [
-    # GUI
-    wayland
-    xwayland
-    hyprland
-    wl-clipboard
-    inputs.swww.packages.${pkgs.system}.swww
+  home = {
+    stateVersion = "24.11";
 
-    # Dev
-    kitty
-    figma-linux
-    patchelf # Для упаковки бинарных файлов
+    username = username;
+    homeDirectory = "/home/${username}";
 
-    # Terminal Utils
-    killall
-    ripgrep
-    lazygit
-    eza
-    bat
-    fd
-    thefuck
-    tlrc
+    packages = with pkgs; [
+      # GUI
+      wayland
+      xwayland
+      hyprland
+      wl-clipboard
+      inputs.swww.packages.${pkgs.system}.swww
 
-    # Main
-    google-chrome
-    telegram-desktop
-    discord
-    keepassxc
+      # Dev
+      kitty
+      figma-linux
+      patchelf # Для упаковки бинарных файлов
 
-    # VPN
-    wireguard-tools
-    openvpn
+      # Terminal Utils
+      killall
+      ripgrep
+      lazygit
+      eza
+      bat
+      fd
+      thefuck
+      tlrc
 
-    # Other
-    pavucontrol
-    helvum
-  ];
+      # Main
+      google-chrome
+      telegram-desktop
+      discord
+      keepassxc
+
+      # VPN
+      wireguard-tools
+      openvpn
+
+      # Other
+      pavucontrol
+      helvum
+    ];
+  };
 }
