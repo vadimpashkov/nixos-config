@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  inputs,
+  ...
+}: let
   # startupScript =
   #   pkgs.pkgs.writeShellScriptBin "start" ''
   #   '';
@@ -33,8 +37,16 @@
   #   echo -e "$DEFAULT_SWAPPY_CONFIG" > $SWAPPY_CONFIG_PATH
   # '';
 in {
+  home.packages = with pkgs; [
+    hyprcursor
+  ];
+
   wayland.windowManager.hyprland = {
     enable = true;
+    systemd.enable = true;
+    # plugins = [
+    #   inputs.hypr-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+    # ];
     settings = {
       "$mod" = "SUPER";
       "$terminal" = "kitty";
@@ -245,6 +257,49 @@ in {
         # "move onscreen 100%-328 56, class:^(ComTeam)$, title:^(ComTeam)$"
         # "animation popin 80%, class:^(ComTeam)$, title:^(ComTeam)$"
       ];
+
+      # extraConfig = ''
+      #   plugins {
+      #       dynamic-cursors {
+      #       enabled = true
+      #       mode = stretch
+      #       threshhold = 1
+      #       stretch {
+      #           limit = 1500
+      #           # linear, quadratic, negative_quadratic
+      #           function = linear
+      #       }
+      #       shake {
+      #           enabled = true
+      #           # use nearest-neighbour (pixelated) scaling when shaking
+      #           # may look weird when effects are enabled
+      #           nearest = true
+      #           # controls how soon a shake is detected
+      #           # lower values mean sooner
+      #           threshold = 5.0
+      #           # magnification level immediately after shake start
+      #           base = 4.0
+      #           # magnification increase per second when continuing to shake
+      #           speed = 5.0
+      #           # how much the speed is influenced by the current shake intensitiy
+      #           influence = 0.0
+      #           # maximal magnification the cursor can reach
+      #           # values below 1 disable the limit (e.g. 0)
+      #           limit = 0.0
+      #           # time in millseconds the cursor will stay magnified after a shake has ended
+      #           timeout = 2000
+      #           # show cursor behaviour `tilt`, `rotate`, etc. while shaking
+      #           effects = false
+      #           # enable ipc events for shake
+      #           # see the `ipc` section below
+      #           ipc = false
+      #       }
+      #       hyprcursor {
+      #           enabled = true
+      #       }
+      #     }
+      #   }
+      # '';
     };
   };
 }
