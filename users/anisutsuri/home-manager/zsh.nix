@@ -11,7 +11,7 @@
 
     history = {
       size = 10000;
-      path = "${outputs.globalConfig.dir.home}/zsh/history";
+      path = "${outputs.globalConfig.dir.home}/.zsh/history";
     };
 
     shellAliases = {
@@ -22,6 +22,7 @@
       "help" = "tldr";
       "osu" = "sudo nixos-rebuild switch --flake .#desktop";
       "hmu" = "home-manager switch --flake .#anisutsuri";
+      "vpn" = "vpn-manager";
     };
 
     oh-my-zsh = {
