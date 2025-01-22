@@ -4,7 +4,7 @@ rec {
   profile = "desktop";
 
   dir = {
-    home = "home/${username}";
+    home = "/home/${username}";
     config = "${dir.home}/nixos-config";
     shScripts = ./non-nix/sh;
     user = ./users/${username};
