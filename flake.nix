@@ -19,7 +19,13 @@
       url = "github:nix-community/nixvim/nixos-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Custom Packages
     screenshot.url = "path:pkgs/screenshot";
+    vpn-manager.url = "path:pkgs/vpn-manager";
+
+    # Custom Fonts
+    fast-font.url = "path:pkgs/fast-font";
   };
 
   outputs = {
