@@ -69,11 +69,10 @@ in {
 
       exec-once = [
         # "~/.local/bin/swww-launch.sh"
-        "[workspace 1 silent] google-chrome-stable"
-        "[workspace 2 silent] kitty"
+        "[workspace 1 silent] kitty"
+        "[workspace 2 silent] google-chrome-stable"
         "[workspace 3 silent] telegram-desktop"
         "swww-daemon &"
-        "hyprlock &"
         "hypridle"
       ];
 
