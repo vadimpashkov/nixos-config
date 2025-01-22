@@ -56,6 +56,7 @@
       thefuck
       tlrc
       inputs.screenshot.packages.${pkgs.system}.screenshot
+      inputs.vpn-manager.packages.${pkgs.system}.vpn-manager
 
       # Main
       google-chrome
@@ -63,9 +64,8 @@
       discord
       keepassxc
 
-      # VPN
-      wireguard-tools
-      openvpn
+      # Emoji Font
+      noto-fonts-emoji
 
       # Other
       pavucontrol
