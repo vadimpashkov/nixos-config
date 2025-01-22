@@ -1,36 +1,40 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   stylix = {
     enable = true;
     autoEnable = false;
 
-    image = ../../../assets/wallpapers/2.png;
+    image = ../assets/wallpapers/1.png;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
 
     fonts = {
       sizes = {
-        applications = 14;
+        applications = 16;
         terminal = 16;
-        desktop = 14;
-        popups = 14;
+        desktop = 16;
+        popups = 16;
       };
       monospace = {
         package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
         name = "JetBrainsMono Nerd Font Mono";
       };
       sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Sans";
+        package = inputs.fast-font.packages.x86_64-linux.fastSans;
+        name = "Fast-Sans";
       };
       serif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Serif";
+        package = inputs.fast-font.packages.x86_64-linux.fastSerif;
+        name = "Fast-Serif";
       };
     };
 
     cursor = {
-      name = "Bibata-Modern-Ice";
+      name = "Bibata-Original-Ice";
       package = pkgs.bibata-cursors;
-      size = 24;
+      size = 20;
     };
 
     opacity = {
