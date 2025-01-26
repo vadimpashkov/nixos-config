@@ -959,6 +959,21 @@
         "type": "github"
       }
     },
+    "nixpkgs_10": {
+      "locked": {
+        "lastModified": 1737662485,
+        "narHash": "sha256-QLvC0BQ5xhnHUpmKzJl1KWNVjyysqoCbuAg+bx4VndU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "a37ebead1785777bed04c56a029f099b85c957d2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1733940404,
@@ -1025,11 +1040,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1736460839,
-        "narHash": "sha256-iW7i0rRk8dK1tqEoDoLbtH3GGKRiKa/Qi70V/TsJADw=",
+        "lastModified": 1737662485,
+        "narHash": "sha256-QLvC0BQ5xhnHUpmKzJl1KWNVjyysqoCbuAg+bx4VndU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a5ab1e5a81c30de0291730df0f72bb7aebb2e469",
+        "rev": "a37ebead1785777bed04c56a029f099b85c957d2",
         "type": "github"
       },
       "original": {
@@ -1072,11 +1087,11 @@
     },
     "nixpkgs_9": {
       "locked": {
-        "lastModified": 1737569970,
-        "narHash": "sha256-zbBILhD5ev4XrxFzvYervECMVV9XpkFKfF6krqTqNUk=",
+        "lastModified": 1737662485,
+        "narHash": "sha256-QLvC0BQ5xhnHUpmKzJl1KWNVjyysqoCbuAg+bx4VndU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "524e0495a41197596d409eff0700fd71dae760e1",
+        "rev": "a37ebead1785777bed04c56a029f099b85c957d2",
         "type": "github"
       },
       "original": {
@@ -1172,6 +1187,7 @@
         "screenshot": "screenshot",
         "stylix": "stylix",
         "swww": "swww",
+        "updater": "updater",
         "vpn-manager": "vpn-manager"
       }
     },
@@ -1181,7 +1197,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-wh+25P/qtRHcXVKpEkwFmOspcuQcW/xWhAL6PL0XB1M=",
+        "narHash": "sha256-UGEAk0++OsIMIqxSJWLG5cMBMC13dZBlbAwWzTqNL4Q=",
         "path": "pkgs/screenshot",
         "type": "path"
       },
@@ -1389,6 +1405,21 @@
         "type": "github"
       }
     },
+    "updater": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_9"
+      },
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-R72bjVDVJBSeKUhGsq3mOu8ntMJ1kn0OX9PFSRWaTu4=",
+        "path": "pkgs/updater",
+        "type": "path"
+      },
+      "original": {
+        "path": "pkgs/updater",
+        "type": "path"
+      }
+    },
     "utils": {
       "inputs": {
         "systems": "systems_5"
@@ -1409,11 +1440,11 @@
     },
     "vpn-manager": {
       "inputs": {
-        "nixpkgs": "nixpkgs_9"
+        "nixpkgs": "nixpkgs_10"
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-PyEdqoi5Jnk5irzvIAf8wd7moO/5ggDUrVAnEU456/s=",
+        "narHash": "sha256-OkXerlvGSH9wALMP+GN+uDu8y3JGiJ1/S2NH8FfFV54=",
         "path": "pkgs/vpn-manager",
         "type": "path"
       },

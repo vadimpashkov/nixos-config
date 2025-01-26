@@ -1,5 +1,5 @@
 {
-  description = "A simple screenshot tool package";
+  description = "NixOS and Home-Manager Updater";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
@@ -10,9 +10,8 @@
     pkgs = import nixpkgs {inherit system;};
   in {
     packages.${system}.default = pkgs.writeShellApplication {
-      name = "screenshot";
-      runtimeInputs = with pkgs; [grimblast swappy libnotify];
-      text = builtins.readFile ./screenshot.sh;
+      name = "updater";
+      text = builtins.readFile ./updater.sh;
     };
   };
 }

@@ -21,6 +21,7 @@
     };
 
     # Custom Packages
+    updater.url = "path:pkgs/updater";
     screenshot.url = "path:pkgs/screenshot";
     vpn-manager.url = "path:pkgs/vpn-manager";
 
