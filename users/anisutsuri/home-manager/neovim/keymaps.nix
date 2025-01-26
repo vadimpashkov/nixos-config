@@ -1,16 +1,6 @@
 {
   programs.nixvim.keymaps = [
     {
-      mode = "i";
-      key = "jj";
-      action = "<Esc>";
-    }
-    {
-      mode = "i";
-      key = "оо";
-      action = "<Esc>";
-    }
-    {
       mode = "n";
       key = "<leader>w";
       action = ":w<CR>";

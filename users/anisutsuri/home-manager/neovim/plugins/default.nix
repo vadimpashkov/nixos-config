@@ -14,12 +14,12 @@
     ./codesnap.nix
     ./diffview.nix
     ./gitsigns.nix
-    ./tmux-navigator.nix
     ./zen-mode.nix
   ];
 
   programs.nixvim.plugins = {
     nix.enable = true;
+    tmux-navigator.enable = true;
     web-devicons.enable = true; # Зависимость для многих плагинов
     lualine.enable = true;
     noice.enable = true;
