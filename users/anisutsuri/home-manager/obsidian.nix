@@ -2,10 +2,10 @@
   gitSyncObsidian = pkgs.writeScriptBin "git-sync-obsidian" ''
     #!/bin/sh
 
-    VAULT_DIR="$HOME/repositories/knowledgebase"
+    VAULT_DIR="$HOME/knowledgebase"
     cd $VAULT_DIR || exit 1
     git add .
-    git commit -m "$(date '+%d-$m-%Y %H:%M:%S')" || exit 0
+    git commit -m "Sync $(date '+%d-$m-%Y %H:%M')" || exit 0
   '';
 in {
   home.packages = [pkgs.obsidian gitSyncObsidian];

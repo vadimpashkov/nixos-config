@@ -19,7 +19,7 @@
     ./home-manager/zoxide.nix
     ./home-manager/fzf.nix
     ./home-manager/zsh.nix
-    ./home-manager/tmux.nix
+    ./home-manager/tmux
     ./home-manager/yazi.nix
     ./home-manager/obsidian.nix
     ./home-manager/swappy.nix
@@ -55,17 +55,15 @@
       fd
       thefuck
       tlrc
-      inputs.screenshot.packages.${pkgs.system}.screenshot
-      inputs.vpn-manager.packages.${pkgs.system}.vpn-manager
+      inputs.updater.packages.${pkgs.system}.default
+      inputs.screenshot.packages.${pkgs.system}.default
+      inputs.vpn-manager.packages.${pkgs.system}.default
 
       # Main
       google-chrome
       telegram-desktop
       discord
       keepassxc
-
-      # Emoji Font
-      noto-fonts-emoji
 
       # Other
       pavucontrol

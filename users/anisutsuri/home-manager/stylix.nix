@@ -22,12 +22,16 @@
         name = "JetBrainsMono Nerd Font Mono";
       };
       sansSerif = {
-        package = inputs.fast-font.packages.x86_64-linux.fastSans;
-        name = "Fast-Sans";
+        package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
+        name = "JetBrainsMono Nerd Font Mono";
       };
       serif = {
         package = inputs.fast-font.packages.x86_64-linux.fastSerif;
         name = "Fast-Serif";
+      };
+      emoji = {
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
       };
     };
 

@@ -1,6 +1,7 @@
 {
   pkgs,
   outputs,
+  config,
   ...
 }: {
   programs.zsh = {
@@ -11,17 +12,18 @@
 
     history = {
       size = 10000;
-      path = "${outputs.globalConfig.dir.home}/.zsh/history";
+      path = "${config.home.homeDirectory}/.zsh/history";
     };
 
     shellAliases = {
       "c" = "clear";
+      "e" = "exit";
       "code" = "nvim";
       "ls" = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
       "lg" = "lazygit";
       "help" = "tldr";
-      "osu" = "sudo nixos-rebuild switch --flake .#desktop";
-      "hmu" = "home-manager switch --flake .#anisutsuri";
+      "usys" = "updater ${outputs.globalConfig.dir.config} system ${outputs.globalConfig.profile}";
+      "uhm" = "updater ${outputs.globalConfig.dir.config} hm ${outputs.globalConfig.username}";
       "vpn" = "vpn-manager";
     };
 
