@@ -39,7 +39,7 @@
 in {
   home.packages = with pkgs; [
     hyprcursor
-    xdg-desktop-portal-hyprland
+    # xdg-desktop-portal-hyprland
   ];
 
   wayland.windowManager.hyprland = {
@@ -68,7 +68,8 @@ in {
       exec-once = [
         # "~/.local/bin/swww-launch.sh"
         "[workspace 1 silent] kitty"
-        "[workspace 2 silent] google-chrome-stable"
+        "[workspace 1 silent] google-chrome-stable"
+        "[workspace 2 silent] obsidian"
         "[workspace 3 silent] telegram-desktop"
         "swww-daemon &"
         "hypridle"
