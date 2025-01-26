@@ -1,6 +1,7 @@
 {
   pkgs,
   outputs,
+  config,
   ...
 }: {
   programs.tmux = {
@@ -60,7 +61,7 @@
       bind ] next-window # Для перемещения вправо по окнам
       bind a last-window # Переключиться на последнее активное окно
       bind r command-prompt "renamew %%"
-      bind C-w new-window -c "${outputs.globalConfig.dir.userAbsolute}/" # Создать новое окно
+      bind C-w new-window -c "${config.home.homeDirectory}/" # Создать новое окно
       bind -r j resize-pane -D 5 # Изменить размер панели вниз на 5
       bind -r k resize-pane -U 5 # Изменить размер панели вверх на 5
       bind -r l resize-pane -R 5 # Изменить размер панели вправо на 5
