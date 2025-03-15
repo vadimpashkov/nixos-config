@@ -5,7 +5,7 @@
     VAULT_DIR="$HOME/knowledgebase"
     cd $VAULT_DIR || exit 1
     git add .
-    git commit -m "Sync $(date '+%d-$m-%Y %H:%M')" || exit 0
+    git commit -m "Sync $(date '+%d-%m-%Y %H:%M')" || exit 0
   '';
 in {
   home.packages = [pkgs.obsidian gitSyncObsidian];

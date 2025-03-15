@@ -62,7 +62,7 @@ in {
 
       monitor = [
         "DP-1, 2560x1440@160Hz, 1080x0, 1"
-        "DP-2, 1920x1080@160Hz, 0x0, 1, transform, 1"
+        # "DP-2, 1920x1080@160Hz, 0x0, 1, transform, 1"
       ];
 
       exec-once = [
